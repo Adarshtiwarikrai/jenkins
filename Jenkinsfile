@@ -1,8 +1,10 @@
 pipeline {
     agent any
+
     tools {
-       'jenkins.plugins.nodejs.tools.NodeJSInstallation' 'node 20.0.0' 
+       'jenkins.plugins.nodejs.tools.NodeJSInstallation' 'node 20.0.0'
     }
+
     stages {
         stage('Build') { 
             steps {
@@ -11,4 +13,24 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            emailext(
+                subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<p>The build completed successfully.</p>
+                         <p><a href="${env.BUILD_URL}">View Build</a></p>""",
+                to: "recipient@gmail.com"
+            )
+        }
+        failure {
+            emailext(
+                subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<p>The build failed.</p>
+                         <p><a href="${env.BUILD_URL}">Check logs</a></p>""",
+                to: "recipient@gmail.com"
+            )
+        }
+    }
 }
+
