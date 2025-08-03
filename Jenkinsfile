@@ -20,7 +20,7 @@ pipeline {
                 subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """<p>The build completed successfully.</p>
                          <p><a href="${env.BUILD_URL}">View Build</a></p>""",
-                to: "recipient@gmail.com"
+                to: "adarshtiwari7799@gmail.com"
             )
         }
         failure {
