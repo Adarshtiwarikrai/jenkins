@@ -1,14 +1,14 @@
 pipeline {
-    agent any
+    agent { label 'gcp-agent' }  
 
     tools {
-       'jenkins.plugins.nodejs.tools.NodeJSInstallation' 'node 20.0.0'
+        nodejs 'node 20.0.0'  
     }
 
     stages {
-        stage('Build') { 
+        stage('Build') {
             steps {
-                sh 'npm install' 
+                sh 'npm install'
                 sh 'npm run build'
             }
         }
@@ -18,7 +18,7 @@ pipeline {
         success {
             emailext(
                 subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """<p>The build completed and and successfully.</p>
+                body: """<p>The build completed successfully.</p>
                          <p><a href="${env.BUILD_URL}">View Build</a></p>""",
                 to: "adarshtiwari7799@gmail.com"
             )
@@ -33,4 +33,3 @@ pipeline {
         }
     }
 }
-
