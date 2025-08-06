@@ -75,7 +75,7 @@ pipeline {
          steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
-                        docker push "$DOCKER_USER/${IMAGE_NAME}:$BUILD_NUMBER"
+                        docker push "$DOCKER_USER/my-app:$BUILD_NUMBER"
                     '''
                 }
             }
