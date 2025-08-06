@@ -63,7 +63,7 @@ pipeline {
         steps{
             withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                 sh '''
-                     docker build -t "$DOCKER_USER/my-app:$BUILD_NUMBER"
+                     docker build -t "$DOCKER_USER/my-app:$BUILD_NUMBER" .
                    '''
             }
            
