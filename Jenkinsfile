@@ -82,7 +82,7 @@ pipeline {
         success {
             emailext(
                 subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """<p>The build completed and and successfullly.</p>
+                body: """<p>The build completed and and and successfullly.</p>
                          <p><a href="${env.BUILD_URL}">View Build</a></p>""",
                 to: "adarshtiwari7799@gmail.com"
             )
