@@ -51,15 +51,6 @@ pipeline {
     
     
     stage('Docker Login') {
-        steps {
-            withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                sh '''
-                   echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                   '''
-            }
-        }
-    }
-    stage ('docker build'){
         steps{
             withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                 sh '''
@@ -69,6 +60,21 @@ pipeline {
            
         
         }
+        
+    }
+    stage ('docker build'){
+        steps {
+            withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh '''
+                   echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                   '''
+            }
+        }
+    }
+    stage ('docker push'){
+         steps{
+            sh 'docker push "$DOCKER_USER/my-app:$BUILD_NUMBER"'
+         }
     }
     }
    
