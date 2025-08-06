@@ -48,7 +48,7 @@ pipeline {
                 sh 'npm run build'
             }
         }
-    }
+    
     
     stage('Docker Login') {
         steps {
@@ -58,6 +58,7 @@ pipeline {
                    '''
             }
         }
+    }
     }
    
     post {
