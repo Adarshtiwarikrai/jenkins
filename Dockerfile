@@ -15,7 +15,7 @@ FROM node:20.10.0 as build
 
 WORKDIR /app
 
-COPY my-app .
+COPY . .
 
 RUN npm install
 
