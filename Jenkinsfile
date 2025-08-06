@@ -72,9 +72,13 @@ pipeline {
         }
     }
     stage ('docker push'){
-         steps{
-           sh "docker push ${env.DOCKER_USER}/my-app:${env.BUILD_NUMBER}"
-         }
+         steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        docker push "$DOCKER_USER/${IMAGE_NAME}:$BUILD_NUMBER"
+                    '''
+                }
+            }
     }
     }
    
