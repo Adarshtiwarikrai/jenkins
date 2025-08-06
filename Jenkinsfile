@@ -73,7 +73,7 @@ pipeline {
     }
     stage ('docker push'){
          steps{
-            sh 'docker push "$DOCKER_USER/my-app:$BUILD_NUMBER"'
+           sh "docker push ${env.DOCKER_USER}/my-app:${env.BUILD_NUMBER}"
          }
     }
     }
