@@ -129,14 +129,12 @@
 pipeline {
     agent any
 
-    environment {
-        KUBECONFIG = credentials('kubeconfig2') // this assumes Secret Text
-    }
-
     stages {
-        stage('Check K8s') {
+        stage('Deploy to K8s') {
             steps {
-                sh 'kubectl get pods'
+                withCredentials([file(credentialsId: 'kubeconfig2', variable: 'KUBECONFIG')]) {
+                    sh 'kubectl get pods'
+                }
             }
         }
     }
