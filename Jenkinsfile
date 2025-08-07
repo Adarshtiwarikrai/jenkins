@@ -78,9 +78,9 @@ pipeline {
                 }
             }
     }
-    stage('Build') {
+    stage('Build second') {
             steps {
-                git branch 'main' url:'https://github.com/Adarshtiwarikrai/kubernetes.git'
+                git branch 'main', url:'https://github.com/Adarshtiwarikrai/kubernetes.git'
              
             }
     }
