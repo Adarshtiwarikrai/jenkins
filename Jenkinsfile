@@ -126,19 +126,19 @@
 //         }
 //     }
 // }
-
 pipeline {
     agent any
 
     environment {
-        KUBECONFIG = 'root/.kube/config' // or wherever the config is in your container
+        KUBECONFIG = credentials('kubeconfig') // this assumes Secret Text
     }
 
     stages {
-        stage('Run Kubectl') {
+        stage('Check K8s') {
             steps {
                 sh 'kubectl get pods'
             }
         }
     }
 }
+
