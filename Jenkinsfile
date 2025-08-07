@@ -40,6 +40,9 @@ pipeline {
     tools {
         nodejs 'node 20.0.0'  
     }
+    environment {
+        KUBECONFIG = '/root/.kube/config' 
+    }
 
     stages {
     stage('Build') {
