@@ -42,14 +42,12 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+    stage('Build') {
             steps {
                 sh 'npm install'
                 sh 'npm run build'
             }
         }
-    
-    
     stage('Docker Login') {
         steps{
             withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
@@ -79,6 +77,24 @@ pipeline {
                     '''
                 }
             }
+    }
+    stage('Build') {
+            steps {
+                git branch 'main' url:'https://github.com/Adarshtiwarikrai/kubernetes.git'
+             
+            }
+    }
+    stage('pull'){
+        steps{
+         sed -i "s|image: adarshtiwari34/my-app:.*|image: ${DOCKER_USER}/my-app:${BUILD_NUMBER}|" manifest2.yaml
+
+        }
+    }
+    stage('kubectl '){
+        steps{
+          sh ' kubectl apply -f manifest2.yaml'
+          sh ' kubectl apply -f manifest3.yaml'
+        }
     }
     }
    
