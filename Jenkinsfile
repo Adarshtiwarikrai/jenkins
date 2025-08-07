@@ -85,10 +85,13 @@ pipeline {
             }
     }
     stage('pull'){
-        steps{
-         sed -i "s|image: adarshtiwari34/my-app:.*|image: ${DOCKER_USER}/my-app:${BUILD_NUMBER}|" manifest2.yaml
-
+        steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            sh '''
+                sed -i "s|image: adarshtiwari34/my-app:.*|image: $DOCKER_USER/my-app:$BUILD_NUMBER|" manifest2.yaml
+            '''
         }
+    }
     }
     stage('kubectl '){
         steps{
