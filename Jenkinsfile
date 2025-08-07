@@ -131,7 +131,7 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = '/root/.kube/config' // or wherever the config is in your container
+        KUBECONFIG = 'root/.kube/config' // or wherever the config is in your container
     }
 
     stages {
