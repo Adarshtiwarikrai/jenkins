@@ -130,7 +130,7 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = credentials('kubeconfig2')  // refers to secret file ID
+        KUBECONFIG = credentials('kubectl')  // refers to secret file ID
     }
 
     stages {
