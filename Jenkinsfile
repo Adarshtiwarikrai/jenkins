@@ -93,9 +93,13 @@ pipeline {
     }
     }
     stage('kubectl '){
+        
         steps{
-          sh ' kubectl apply -f manifest2.yaml'
-          sh ' kubectl apply -f manifest3.yaml'
+           sh '''
+            export KUBECONFIG=/root/.kube/config  # Adjust path if needed
+            which kubectl
+            kubectl get pods
+          '''
         }
     }
     }
