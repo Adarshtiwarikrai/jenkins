@@ -151,7 +151,7 @@ pipeline {
             }
         }
 
-        stage('Run kubectl get pods') {
+        stage('Run kubectl get  jk pods') {
             steps {
                 sh 'kubectl get pods'
             }
