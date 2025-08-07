@@ -129,11 +129,31 @@
 
 pipeline {
     agent any
+
+    environment {
+        KUBECONFIG = '/root/.kube/config' // Ensure this is valid in the container
+    }
+
     stages {
         stage('Check kubectl') {
             steps {
                 sh 'which kubectl'
                 sh 'kubectl version --client'
+            }
+        }
+
+        stage('Check Kubeconfig') {
+            steps {
+                sh 'echo "Checking kubeconfig file..."'
+                sh 'ls -l $KUBECONFIG'
+                sh 'cat $KUBECONFIG'
+                sh 'kubectl config get-contexts'
+            }
+        }
+
+        stage('Run kubectl get pods') {
+            steps {
+                sh 'kubectl get pods'
             }
         }
     }
