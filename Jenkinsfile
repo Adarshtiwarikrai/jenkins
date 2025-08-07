@@ -130,7 +130,7 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = credentials('kubeconfig') // this assumes Secret Text
+        KUBECONFIG = credentials('kubeconfig2') // this assumes Secret Text
     }
 
     stages {
