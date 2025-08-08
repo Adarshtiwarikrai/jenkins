@@ -127,10 +127,15 @@
 //     }
 // }
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'google/cloud-sdk:latest' // Official Google Cloud SDK image
+            args '-u root'                  // so you can install extras if needed
+        }
+    }
 
     environment {
-        GOOGLE_APPLICATION_CREDENTIALS = credentials('gke-service-account_one') // Jenkins secret file ID
+        GOOGLE_APPLICATION_CREDENTIALS = credentials('gke-service-account') // Secret file type
         PROJECT_ID = 'vertical-cirrus-465805-s7'
         CLUSTER_NAME = 'autopilot-cluster-1'
         CLUSTER_ZONE = 'us-central1'
@@ -140,6 +145,9 @@ pipeline {
         stage('Connect to GKE') {
             steps {
                 sh '''
+                    echo "Installing kubectl..."
+                    apt-get update -qq && apt-get install -y kubectl
+
                     echo "Activating service account..."
                     gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
 
