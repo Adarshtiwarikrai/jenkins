@@ -33,18 +33,18 @@
 //         }
 //     }
 // }
-
 pipeline {
     agent any
     
     tools {
         nodejs 'node 20.0.0'  
     }
+    
     environment {
-        	    PROJECT_ID = 'vertical-cirrus-465805-s7'
-                CLUSTER_NAME = 'autopilot-cluster-1'
-                LOCATION = 'us-central1'
-                CREDENTIALS_ID = 'gke-service-account'		
+        PROJECT_ID = 'vertical-cirrus-465805-s7'
+        CLUSTER_NAME = 'autopilot-cluster-1'
+        LOCATION = 'us-central1'
+        CREDENTIALS_ID = 'gke-service-account'		
     }
 
     stages {
@@ -55,7 +55,7 @@ pipeline {
             }
         }
 
-        stage('Docker Login') {
+        stage('Docker Build') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
@@ -65,7 +65,7 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhubpassword', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
@@ -102,12 +102,17 @@ pipeline {
         }
 
         stage('GKE Auth & Deploy') {
-             steps{
-                   echo "Deployment started ..."
-		 
-		   
-                   step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifests: ["manifest2.yaml", "manifest3.yaml"], kubeconfigPath: 'kubeconfig', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-		   echo "Deployment Finished ..."
+            steps {
+                echo "Deployment started ..."
+                step([
+                    $class: 'KubernetesEngineBuilder',
+                    projectId: env.PROJECT_ID,
+                    clusterName: env.CLUSTER_NAME,
+                    location: env.LOCATION,
+                    credentialsId: env.CREDENTIALS_ID,
+                    manifestPattern: 'manifest2.yaml'
+                ])
+                echo "Deployment Finished ..."
             }
         }
     }
@@ -115,7 +120,7 @@ pipeline {
     post {
         success {
             emailext(
-                subject: "✅ Build yeah Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """<p>The build completed successfully.</p>
                          <p><a href="${env.BUILD_URL}">View Build</a></p>""",
                 to: "adarshtiwari7799@gmail.com"
