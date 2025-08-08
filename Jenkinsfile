@@ -34,6 +34,7 @@
 //     }
 // }
 
+
 pipeline {
     agent any
     
@@ -98,6 +99,18 @@ pipeline {
                     sh '''
                         sed -i "s|image: adarshtiwari34/my-app:.*|image: $DOCKER_USER/my-app:$BUILD_NUMBER|" manifest2.yaml
                     '''
+                }
+            }
+        }
+
+        stage('Setup GKE Credentials') {
+            steps {
+                withCredentials([file(credentialsId: env.CREDENTIALS_ID, variable: 'GKE_KEYFILE')]) {
+                    sh """
+                        gcloud auth activate-service-account --key-file=$GKE_KEYFILE
+                        gcloud config set project ${PROJECT_ID}
+                        gcloud container clusters get-credentials ${CLUSTER_NAME} --zone ${LOCATION}
+                    """
                 }
             }
         }
