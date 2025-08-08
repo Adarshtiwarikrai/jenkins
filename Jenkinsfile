@@ -126,27 +126,27 @@
 //         }
 //     }
 // }
+
 pipeline {
     agent any
 
     stages {
-        stage('GKE Auth') {
+        stage('GKE Auth & Get Pods') {
             steps {
-                withGoogleServiceAccountCredentials(credentialsId: 'gke-service-account') {
+                withCredentials([file(credentialsId: 'gke-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                     sh '''
                         echo "Activating service account..."
                         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+                        
+                        echo "Getting GKE credentials..."
                         gcloud container clusters get-credentials autopilot-cluster-1 \
-                            --zone us-central1 \
+                            --region us-central1 \
                             --project vertical-cirrus-465805-s7
+                        
+                        echo "Listing pods..."
+                        kubectl get pods --all-namespaces
                     '''
                 }
-            }
-        }
-
-        stage('Get Pods') {
-            steps {
-                sh 'kubectl get pods --all-namespaces'
             }
         }
     }
