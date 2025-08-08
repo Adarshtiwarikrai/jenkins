@@ -97,26 +97,28 @@ pipeline {
     }
     stage('GKE Auth & Get Pods') {
             steps {
-                withCredentials([file(credentialsId: 'gke-service-account_one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                    sh '''
-                        export PATH=$PATH:/google-cloud-sdk/bin:/usr/local/bin
+                 withCredentials([file(credentialsId: 'gke-service-account_one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+            sh '''
+                export PATH=$PATH:/google-cloud-sdk/bin:/usr/local/bin
 
-                        echo "gcloud version:"
-                        gcloud version
+                echo "gcloud version:"
+                gcloud version
 
-                        echo "Activating service account..."
-                        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+                echo "Activating service account..."
+                gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
 
-                        echo "Getting GKE credentials..."
-                        gcloud container clusters get-credentials autopilot-cluster-1 \
-                            --region us-central1 \
-                            --project vertical-cirrus-465805-s7
+                echo "Getting GKE credentials..."
+                gcloud container clusters get-credentials autopilot-cluster-1 \
+                    --region us-central1 \
+                    --project vertical-cirrus-465805-s7
 
-                        echo "Listing pods..."
-                        kubectl apply -f manifest2.yaml
-                        kubectl apply -f mainfest3.yaml
-                    '''
-                }
+                echo "Deploying to Kubernetes..."
+                kubectl apply -f manifest2.yaml
+                kubectl apply -f manifest3.yaml
+
+                echo "Listing pods..."
+                kubectl get pods --all-namespaces
+            '''
             }
         }
     }
