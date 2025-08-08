@@ -33,6 +33,7 @@
 //         }
 //     }
 // }
+
 pipeline {
     agent any
     
@@ -40,7 +41,10 @@ pipeline {
         nodejs 'node 20.0.0'  
     }
     environment {
-        KUBECONFIG = '/root/.kube/config' 
+        	    PROJECT_ID = 'vertical-cirrus-465805-s7'
+                CLUSTER_NAME = 'autopilot-cluster-1'
+                LOCATION = 'us-central1'
+                CREDENTIALS_ID = 'gke-service-account_one'		
     }
 
     stages {
@@ -98,31 +102,12 @@ pipeline {
         }
 
         stage('GKE Auth & Deploy') {
-            steps {
-                withCredentials([file(credentialsId: 'gke-service-account_one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                    sh '''
-                        export PATH=$PATH:/google-cloud-sdk/bin:/usr/local/bin
-
-                        echo "gcloud version:"
-                        gcloud version
-
-                        echo "Activating service account..."
-                        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-
-                        echo "Getting GKE credentials..."
-                        gcloud container clusters get-credentials autopilot-cluster-1 \
-                            --region us-central1 \
-                            --project vertical-cirrus-465805-s7
-
-                        echo "Deploying to Kubernetes..."
-                        kubectl apply -f manifest2.yaml
-                        kubectl apply -f manifest3.yaml
-
-                        echo "Listing pods..."
-                        kubectl get pods 
-                        kubectl get svc
-                    '''
-                }
+             steps{
+                   echo "Deployment started ..."
+		 
+		   
+                   step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'manifest2.yaml,manifest3.yaml', kubeconfigPath: 'kubeconfig', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+		   echo "Deployment Finished ..."
             }
         }
     }
