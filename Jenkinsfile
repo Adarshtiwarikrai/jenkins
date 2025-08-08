@@ -130,23 +130,24 @@
 pipeline {
     agent any
 
-    environment {
-        PROJECT_ID = 'vertical-cirrus-465805-s7'
-        CLUSTER_NAME = 'autopilot-cluster-1'
-        CLUSTER_ZONE = 'us-central1'
-    }
-
     stages {
         stage('GKE Auth') {
             steps {
-                withCredentials([file(credentialsId: 'gke-service-account', variable: 'GCP_KEY')]) {
+                withGoogleServiceAccountCredentials(credentialsId: 'gke-service-account') {
                     sh '''
-                        gcloud auth activate-service-account --key-file=$GCP_KEY
-                        gcloud config set project $PROJECT_ID
-                        gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE --project $PROJECT_ID
-                        kubectl get pods --all-namespaces
+                        echo "Activating service account..."
+                        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+                        gcloud container clusters get-credentials autopilot-cluster-1 \
+                            --zone us-central1 \
+                            --project vertical-cirrus-465805-s7
                     '''
                 }
+            }
+        }
+
+        stage('Get Pods') {
+            steps {
+                sh 'kubectl get pods --all-namespaces'
             }
         }
     }
