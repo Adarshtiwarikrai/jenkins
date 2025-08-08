@@ -131,8 +131,8 @@ pipeline {
                         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
                         gcloud container clusters get-credentials $CLUSTER_NAME --zone $LOCATION --project $PROJECT_ID
                          echo "Checking pods in the cluster..."
-                         sh 'kubectl get pods'
-                         sh 'kubectl get svc'
+                          kubectl get pods
+                          kubectl get svc
                     '''
                 }
             }
