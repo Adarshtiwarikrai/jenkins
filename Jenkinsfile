@@ -125,20 +125,20 @@
 //             )
 //         }
 //     }
-// }
-pipeline {
+// }pipeline {
     agent any
 
-    environment {
-        KUBECONFIG = credentials('kubectl')  // refers to secret file ID
-    }
-
     stages {
-        stage('Deploy to K8s') {
+        stage('Deploy to GKE') {
             steps {
-                sh 'kubectl get pods'
+                step([$class: 'KubernetesEngineBuilder',
+                      projectId: 'vertical-cirrus-465805-s7',   // your GCP project ID
+                      clusterName: 'autopilot-cluster-1',    // your GKE cluster name
+                      zone: 'us-central1',            // your cluster’s zone or region
+                      manifestPattern: 'k8s/',          // path to your manifests in repo
+                      credentialsId: 'gke-service-account', // ID of Google Service Account from private key
+                      verifyDeployments: true])
             }
         }
     }
 }
-
