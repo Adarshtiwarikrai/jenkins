@@ -129,16 +129,32 @@
 pipeline {
     agent any
 
+    environment {
+        GOOGLE_APPLICATION_CREDENTIALS = credentials('gke-service-account') // Jenkins secret file ID
+        PROJECT_ID = 'vertical-cirrus-465805-s7'
+        CLUSTER_NAME = 'autopilot-cluster-1'
+        CLUSTER_ZONE = 'us-central1'
+    }
+
     stages {
-        stage('Deploy to to to GKE') {
+        stage('Connect to GKE') {
             steps {
-                step([$class: 'KubernetesEngineBuilder',
-                      projectId: 'vertical-cirrus-465805-s7',   // your GCP project ID
-                      clusterName: 'autopilot-cluster-1',    // your GKE cluster name
-                      zone: 'us-central1',            // your cluster’s zone or region
-                      manifestPattern: 'k8s/',          // path to your manifests in repo
-                      credentialsId: 'gke-service-account', // ID of Google Service Account from private key
-                      verifyDeployments: true])
+                sh '''
+                    echo "Activating service account..."
+                    gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+
+                    echo "Setting project..."
+                    gcloud config set project $PROJECT_ID
+
+                    echo "Getting cluster credentials..."
+                    gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE --project $PROJECT_ID
+                '''
+            }
+        }
+
+        stage('Get Pods') {
+            steps {
+                sh 'kubectl get pods --all-namespaces'
             }
         }
     }
