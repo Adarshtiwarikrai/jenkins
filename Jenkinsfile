@@ -126,43 +126,27 @@
 //         }
 //     }
 // }
+
 pipeline {
-    agent {
-        docker {
-            image 'google/cloud-sdk:latest' // Official Google Cloud SDK image
-            args '-u root'                  // so you can install extras if needed
-        }
-    }
+    agent any
 
     environment {
-        GOOGLE_APPLICATION_CREDENTIALS = credentials('gke-service-account') // Secret file type
         PROJECT_ID = 'vertical-cirrus-465805-s7'
         CLUSTER_NAME = 'autopilot-cluster-1'
         CLUSTER_ZONE = 'us-central1'
     }
 
     stages {
-        stage('Connect to GKE') {
+        stage('GKE Auth') {
             steps {
-                sh '''
-                    echo "Installing kubectl..."
-                    apt-get update -qq && apt-get install -y kubectl
-
-                    echo "Activating service account..."
-                    gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-
-                    echo "Setting project..."
-                    gcloud config set project $PROJECT_ID
-
-                    echo "Getting cluster credentials..."
-                    gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE --project $PROJECT_ID
-                '''
-            }
-        }
-
-        stage('Get Pods') {
-            steps {
-                sh 'kubectl get pods --all-namespaces'
+                withCredentials([file(credentialsId: 'gke-service-account', variable: 'GCP_KEY')]) {
+                    sh '''
+                        gcloud auth activate-service-account --key-file=$GCP_KEY
+                        gcloud config set project $PROJECT_ID
+                        gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE --project $PROJECT_ID
+                        kubectl get pods --all-namespaces
+                    '''
+                }
             }
         }
     }
