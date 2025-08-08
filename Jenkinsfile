@@ -33,6 +33,7 @@
 //         }
 //     }
 // }
+
 pipeline {
     agent any
     
@@ -113,6 +114,14 @@ pipeline {
                     manifestPattern: 'manifest2.yaml'
                 ])
                 echo "Deployment Finished ..."
+            }
+        }
+
+        stage('Check Pods') {
+            steps {
+                echo "Checking pods in the cluster..."
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
             }
         }
     }
