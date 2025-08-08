@@ -43,6 +43,7 @@ pipeline {
     }
     
     environment {
+         KUBECONFIG = '/root/.kube/config' 
         PROJECT_ID = 'vertical-cirrus-465805-s7'
         CLUSTER_NAME = 'autopilot-cluster-1'
         LOCATION = 'us-central1'
