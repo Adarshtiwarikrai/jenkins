@@ -106,7 +106,7 @@ pipeline {
                    echo "Deployment started ..."
 		 
 		   
-                   step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'manifest2.yaml,manifest3.yaml', kubeconfigPath: 'kubeconfig', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+                   step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifests: ["manifest2.yaml", "manifest3.yaml"], kubeconfigPath: 'kubeconfig', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 		   echo "Deployment Finished ..."
             }
         }
