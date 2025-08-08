@@ -103,14 +103,20 @@ pipeline {
             }
         }
 
-        stage('Setup GKE Credentials') {
+         stage('GKE build & Deploy') {
             steps {
-                withCredentials([file(credentialsId: env.CREDENTIALS_ID, variable: 'GKE_KEYFILE')]) {
-                    sh """
-                        gcloud auth activate-service-account --key-file=$GKE_KEYFILE
-                        gcloud config set project ${PROJECT_ID}
-                        gcloud container clusters get-credentials ${CLUSTER_NAME} --zone ${LOCATION}
-                    """
+                withCredentials([file(credentialsId: 'gke-service-account_one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    sh '''
+                        export PATH=$PATH:/google-cloud-sdk/bin:/usr/local/bin
+
+                        echo "gcloud version:"
+                        gcloud version
+
+                        echo "Activating service account..."
+                        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+                        gcloud container clusters get-credentials $CLUSTER_NAME --zone $LOCATION --project $PROJECT_ID
+
+                    '''
                 }
             }
         }
