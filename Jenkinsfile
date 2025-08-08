@@ -130,7 +130,7 @@ pipeline {
     agent any
 
     environment {
-        GOOGLE_APPLICATION_CREDENTIALS = credentials('gke-service-account') // Jenkins secret file ID
+        GOOGLE_APPLICATION_CREDENTIALS = credentials('gke-service-account_one') // Jenkins secret file ID
         PROJECT_ID = 'vertical-cirrus-465805-s7'
         CLUSTER_NAME = 'autopilot-cluster-1'
         CLUSTER_ZONE = 'us-central1'
