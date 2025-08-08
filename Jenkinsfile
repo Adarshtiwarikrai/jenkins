@@ -119,7 +119,8 @@ pipeline {
                         kubectl apply -f manifest3.yaml
 
                         echo "Listing pods..."
-                        kubectl get pods --all-namespaces
+                        kubectl get pods 
+                        kubectl get svc
                     '''
                 }
             }
