@@ -96,8 +96,8 @@ pipeline {
     }
     }
     stage('GKE Auth & Get Pods') {
-            steps {
-                 withCredentials([file(credentialsId: 'gke-service-account_one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+             steps {
+        withCredentials([file(credentialsId: 'gke-service-account_one', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
             sh '''
                 export PATH=$PATH:/google-cloud-sdk/bin:/usr/local/bin
 
@@ -119,7 +119,9 @@ pipeline {
                 echo "Listing pods..."
                 kubectl get pods --all-namespaces
             '''
-            }
+        }
+    }
+}
         }
     }
    
